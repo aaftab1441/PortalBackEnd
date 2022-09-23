@@ -610,6 +610,23 @@ namespace EaglePortal.Services
 
             return toReturn;
         }
+        public Dictionary<string, object> GetLocations(int merchantId)
+        {
+            Dictionary<string, object> toReturn = new Dictionary<string, object>();
+            SqlCommand selectCommand = conn.CreateCommand();
+            #region sql
+            string selectSQL = "SELECT * FROM Location WHERE merchantid = @Id";
+
+            selectCommand.CommandText = selectSQL;
+            selectCommand.Parameters.AddWithValue("@Id", merchantId);
+
+            #endregion
+            int ID = (int)selectCommand.ExecuteScalar();
+
+            toReturn.Add("Success", ID);
+
+            return toReturn;
+        }
         public Dictionary<string, object> UpdateLocation(dynamic location)
         {
             Dictionary<string, object> toReturn = new Dictionary<string, object>();

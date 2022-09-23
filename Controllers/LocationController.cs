@@ -74,6 +74,22 @@ namespace EaglePortal.Controllers
             }
             return result;
         }
+        [HttpGet]
+        [Route("~/[controller]/GetLocations")]
+        [Produces("application/json")]
+        [EnableCors("AnyOrigin")]
+        public ActionResult<Hashtable> GetLocations(JsonElement data)
+        {
+            Hashtable result = new Hashtable();
+            JsonElement id;
+            if (data.TryGetProperty("id", out id))
+            {
+                Dictionary<string, object> returnResult = locationManager.GetLocations(Convert.ToInt32(utilityManager.TryGetProperty(id, "Id")));
+                result = utilityManager.addToHashtable(returnResult, result);
+                result.Add("Success", true);
+            }
+            return result;
+        }
         [HttpPost]
         [Route("~/[controller]/UpdateLocation")]
         [Produces("application/json")]
@@ -104,11 +120,7 @@ namespace EaglePortal.Controllers
             Hashtable result = new Hashtable();
             try
             {
-                Random rng = new Random();
-                int number = rng.Next(1, 1000000000);
-                string digits = number.ToString("000000000");
-
-                string path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "PF" + digits);
+                string path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", file.FileName);
 
                 using (Stream stream = new FileStream(path, FileMode.Create))
                 {
