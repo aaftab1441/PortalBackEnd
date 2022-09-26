@@ -75,19 +75,17 @@ namespace EaglePortal.Controllers
             return result;
         }
         [HttpGet]
-        [Route("~/[controller]/GetLocations")]
+        [Route("~/[controller]/GetLocations/{merchantId}")]
         [Produces("application/json")]
         [EnableCors("AnyOrigin")]
-        public ActionResult<Hashtable> GetLocations(JsonElement data)
+        public ActionResult<Hashtable> GetLocations(int merchantId)
         {
             Hashtable result = new Hashtable();
-            JsonElement id;
-            if (data.TryGetProperty("id", out id))
-            {
-                Dictionary<string, object> returnResult = locationManager.GetLocations(Convert.ToInt32(utilityManager.TryGetProperty(id, "Id")));
-                result = utilityManager.addToHashtable(returnResult, result);
-                result.Add("Success", true);
-            }
+
+            Dictionary<string, object> returnResult = locationManager.GetLocations(merchantId);
+            result = utilityManager.addToHashtable(returnResult, result);
+            result.Add("Success", true);
+
             return result;
         }
         [HttpPost]

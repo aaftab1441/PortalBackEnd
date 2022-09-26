@@ -613,18 +613,29 @@ namespace EaglePortal.Services
         public Dictionary<string, object> GetLocations(int merchantId)
         {
             Dictionary<string, object> toReturn = new Dictionary<string, object>();
-            SqlCommand selectCommand = conn.CreateCommand();
             #region sql
             string selectSQL = "SELECT * FROM Location WHERE merchantid = @Id";
 
-            selectCommand.CommandText = selectSQL;
-            selectCommand.Parameters.AddWithValue("@Id", merchantId);
+            DataSet results = new DataSet();
+            SqlDataAdapter configAdapter = new SqlDataAdapter(selectSQL, conn);
+
+            configAdapter.SelectCommand.Parameters.AddWithValue("@Id", merchantId);
+
+            configAdapter.Fill(results);
 
             #endregion
-            int ID = (int)selectCommand.ExecuteScalar();
 
-            toReturn.Add("Success", ID);
+            toReturn.Add("Locations", ResultsToList(results));
 
+            return toReturn;
+        }
+        private List<dynamic> ResultsToList(DataSet results)
+        {
+            List<dynamic> toReturn = new List<dynamic>();
+            foreach (DataRow aRow in results.Tables[0].Rows)
+            {
+                toReturn.Add(utilityManager.GetDataAsDynamic(aRow));
+            }
             return toReturn;
         }
         public Dictionary<string, object> UpdateLocation(dynamic location)
